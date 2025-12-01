@@ -364,6 +364,7 @@ class Runner:
           event.author,
           event.id,
       )
+      return root_agent
     for event in filter(lambda e: e.author != 'user', reversed(session.events)):
       if event.author == root_agent.name:
         # Found root agent.
