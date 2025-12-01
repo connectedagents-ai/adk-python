@@ -357,7 +357,13 @@ class Runner:
     # request as a special long running function tool call.
     event = find_matching_function_call(session.events)
     if event and event.author:
-      return root_agent.find_agent(event.author)
+      if agent := root_agent.find_agent(event.author):
+        return agent
+      logger.warning(
+          'Matched function call authored by unknown agent: %s, event id: %s',
+          event.author,
+          event.id,
+      )
     for event in filter(lambda e: e.author != 'user', reversed(session.events)):
       if event.author == root_agent.name:
         # Found root agent.
