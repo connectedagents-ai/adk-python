@@ -18,6 +18,12 @@ execution controls.
 - Current pain points: inconsistent tool access across agents, manual actor
   selection, weak safety controls, and limited visibility into cross-tool
   workflows.
+- Legal-tech context: market sees 60–70% review time reduction from
+  specialized multi-agent deployments; top vendors include Relativity, Everlaw,
+  Clio, Spellbook, LexisNexis, Thomson Reuters, Lawgeex, and Briefpoint.
+  Compliance expectations are anchored to ABA Model Rule 1.1 (Comment 8),
+  EDRM/TAR transparency, Sedona AI commentary (human oversight/bias review),
+  GDPR/CCPA logging, and ISO/IEC 42001:2023 governance controls.
 
 ## Goals
 - Allow ADK agents to dynamically choose MCP tools (Apify actors) as part of
@@ -30,6 +36,9 @@ execution controls.
   timestamps, user/agent identity).
 - Keep latency reasonable for common tasks (<30s p95 for default actors) with
   timeout and retry policies.
+- Maintain compliance-aligned guardrails (privacy labels, jurisdictional
+  constraints, provenance logging) to satisfy ABA/EDRM/Sedona and
+  ISO/IEC 42001 expectations for transparency, human oversight, and governance.
 
 ## Non-Goals
 - Replacing existing built-in tools (search/code execution) unless explicitly
@@ -58,6 +67,8 @@ execution controls.
   - Control plane: configuration store for allow/deny lists, quotas, and
     timeouts (env vars + YAML/JSON profiles).
   - Observability: structured logging, metrics, and trace exporters.
+  - Compliance layer: provenance logger, privacy-label evaluator, and
+    jurisdiction filter for outbound requests and storage locations.
 - **Data Flow**
   1. Planner scores tools (Apify actors + native tools) using task context,
      cost/latency hints, and allow/deny constraints.
@@ -74,6 +85,8 @@ execution controls.
     exceeds threshold.
   - Fallbacks: alternate actor suggestion or built-in search when MCP path
     fails.
+  - Compliance prompts: privilege/PII flags and attorney-in-loop checkpoints
+    for high-risk tasks (e.g., cross-border scraping or potential PII capture).
 
 ## Functional Requirements
 - **Tool Registration**
@@ -98,15 +111,24 @@ execution controls.
     validation; attach raw payload for traceability.
   - Optional post-processing: table rendering, CSV/Parquet export, and signed
     URL return when files are produced.
+  - Provenance bundle: actor name/version, run ID, timestamps, requester,
+    planner decision record (ranked tools + reasons), jurisdiction labels,
+    and privacy annotations.
 - **Security & Compliance**
   - Do not log raw secrets; redact tokens in traces.
   - Enforce per-actor rate limits and maximum input sizes.
   - Add configurable domain/URL safelist for scraping-centric actors when
     required.
+  - Support privacy labels on actors (e.g., "No-PII", "EU-only storage", "HIPAA"
+    sensitive) to drive planner routing and storage controls.
+  - Require human approval for privilege-sensitive flows (e.g., legal memo
+    drafting using scraped data) and log approvals.
 - **Observability**
   - Emit structured logs and metrics: actor name, duration, status, retries,
     bytes returned.
   - Correlate MCP runs with agent/session IDs for end-to-end traceability.
+  - Export compliance telemetry (provenance IDs, privacy labels, reviewer IDs)
+    for audit trails aligning with GDPR/CCPA and ISO/IEC 42001.
 - **Failure Handling**
   - Clear error surfaces for common cases: auth failure, missing actor,
     timeout, schema mismatch.
@@ -123,6 +145,10 @@ execution controls.
 - Acceptance: a demo scenario (pizza joints in Prague) runs end-to-end with
   structured table output, provenance, and telemetry; automated tests cover
   success, timeout, auth failure, schema mismatch, and fallback behaviors.
+- Compliance: audit trail must include planner rationale, privacy labels,
+  retention tags, and reviewer/approver IDs for high-risk runs; validation
+  suite includes GDPR/CCPA data handling checks and ISO/IEC 42001 control
+  mapping.
 
 ## Configuration & Deployment
 - **Local (Claude Desktop)**: Provide sample MCP config snippet with
@@ -135,6 +161,9 @@ execution controls.
 - **Profiles**: Support multiple profiles (dev/stage/prod) with different
   allow-lists and quotas. Expose dry-run mode to validate profiles without
   invoking actors.
+- **Jurisdiction & residency**: Configurable storage locations and data
+  egress rules per profile (e.g., EU-only for certain actors) with automatic
+  enforcement in upload/export paths.
 
 ## Operational Playbooks
 - **Incident Response**:
@@ -150,6 +179,11 @@ execution controls.
 - **Compliance**:
   - Quarterly review of actor allow-lists against domain safelists and data
     retention policies.
+  - Annual control attestation mapping to ABA tech competence, EDRM/TAR,
+    Sedona AI commentary, and ISO/IEC 42001 control checklist; document
+    variances and compensating controls.
+  - Privilege and PII QA spot-checks with human reviewer sign-off for sampled
+    MCP runs.
 
 ## Non-Functional Requirements
 - **Performance**: Default actor invocations p95 <30s; planner should avoid
@@ -160,6 +194,8 @@ execution controls.
   schema for local MCP testing.
 - **Maintainability**: Configuration-driven; minimal code changes required to
   onboard new actors.
+- **Auditability**: End-to-end provenance with immutable identifiers and
+  exportable audit bundle aligned to privacy and governance requirements.
 
 ## Testing & Validation
 - Unit tests for MCP tool adapter: request/response normalization, schema
@@ -170,6 +206,9 @@ execution controls.
   and failure rates.
 - UAT checklist for sample workflows (pizza search, lead enrichment, site
   monitoring) with screenshots or saved artifacts.
+- Compliance validation: GDPR/CCPA logging completeness, ISO/IEC 42001
+  control mapping, privilege-review checkpoints, and bias/quality sampling of
+  scraped outputs.
 
 ## Success Metrics
 - 90% of eligible agent tasks use MCP actors without manual intervention
@@ -179,6 +218,8 @@ execution controls.
 - Mean planning latency increase <300ms when MCP toolset is enabled.
 - Audit completeness: 100% of MCP calls include actor name, inputs
   (redacted), outputs, and timestamps in traces.
+- Compliance coverage: 100% of high-risk runs contain privacy labels,
+  provenance IDs, retention tags, and reviewer/approver metadata.
 
 ## Risks & Mitigations
 - **Actor Variability**: Schemas differ across actors. Mitigation: maintain
@@ -198,7 +239,8 @@ execution controls.
    selection; add dashboards for success/failure rates; run soak tests and
    finalize schema adapters.
 3. **GA**: Default-on for eligible agents; publish cookbook examples; finalize
-   SLOs and escalation playbooks; enable automated config validation in CI.
+   SLOs and escalation playbooks; enable automated config validation in CI; add
+   compliance audit export and residency enforcement checks.
 
 ## Open Questions
 - Should we auto-learn latency/cost profiles per actor to inform planner
@@ -207,3 +249,5 @@ execution controls.
 - What is the required retention period for MCP call logs and outputs?
 - Should we support per-actor privacy labels (e.g., disallow PII extraction)
   that influence planner routing and audit requirements?
+- How do we align Apify storage locations with jurisdictional requirements
+  (e.g., EU data residency) while preserving performance?
