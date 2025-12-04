@@ -25,6 +25,30 @@ execution controls.
   EDRM/TAR transparency, Sedona AI commentary (human oversight/bias review),
   GDPR/CCPA logging, and ISO/IEC 42001:2023 governance controls.
 
+## External Research Insights (deep dive)
+- **NIST AI RMF (2023)**: Integrate Govern/Map/Measure/Manage functions into
+  MCP workflows (e.g., risk registers for actors, measurement hooks for
+  bias/robustness) and document control mappings for traceability.
+- **ISO/IEC 23894:2023 AI risk management**: Add risk assessment templates per
+  actor (threat model, likelihood/impact scoring, controls) and require gated
+  promotion when residual risk exceeds defined thresholds.
+- **EU AI Act (2024 political agreement)**: Flag potential high-risk uses
+  (biometric, employment, credit) and require explicit user opt-in, data
+  minimization, and audit-ready logs before enabling those actor classes.
+- **NCSC UK / CISA secure-by-design**: Enforce least-privilege MCP tokens,
+  immutable audit logs, secure defaults (deny-list-first), and supply-chain
+  integrity checks for actor definitions and container images.
+- **MITRE ATLAS / adversarial testing**: Run red-team scenarios (prompt
+  injection, data exfiltration, scraping to banned domains) against MCP tool
+  calls; track findings and mitigations in a shared defect log with regression
+  tests.
+- **Sedona AI Commentary (2023) & EDRM TAR protocols**: Maintain explainability
+  artifacts (planner rationale, actor choice justification, sampling logs) and
+  human-in-the-loop checkpoints for privilege, bias, and quality reviews.
+- **ABA tech competence & privacy (GDPR/CCPA)**: Publish user-facing notices
+  when invoking web data collection, store provenance with retention labels,
+  and provide export/delete flows for scraped data tied to a matter.
+
 ## Goals
 - Allow ADK agents to dynamically choose MCP tools (Apify actors) as part of
   task planning and execution.
