@@ -159,6 +159,34 @@ execution controls.
   - Planner fallback path: suggest alternate actor or degrade to built-in
     search when Apify is unavailable.
 
+## MCP Tool Metadata Optimization (ChatGPT/connector recall)
+- **Golden prompt set**
+  - Curate labeled prompts: direct (actor named), indirect (outcome only), and
+    negative (built-in tools should respond). Store expected behavior
+    (invoke/do nothing/alternative) for regression.
+  - Include privacy/consent prompts to verify the model avoids calling MCP
+    tools without explicit approvals in sensitive contexts.
+- **Metadata drafting**
+  - Names: pair domain + action (e.g., `maps.lookup_places`).
+  - Descriptions: start with "Use this when..." and include exclusions ("Do not
+    use for reminders"). Call out privacy/jurisdiction constraints and any
+    required approvals.
+  - Parameters: describe each argument with examples; enumerate constrained
+    values; add `readOnlyHint: true` for non-mutating tools.
+- **Evaluation loop (developer mode)**
+  - Link connector and replay golden prompts; record selected tool, arguments,
+    and UI component rendering.
+  - Track precision/recall per prompt; prioritize precision on negative cases
+    before recall tuning.
+  - Revise one field at a time; log timestamped revisions and outcomes; share
+    diffs for copy review.
+- **Production monitoring**
+  - Weekly analytics review for "wrong tool" confirmations; investigate recall
+    drops after catalog or schema changes.
+  - Capture user feedback to expand descriptions and clarify disallowed cases.
+  - Schedule prompt replays after adding tools or updating structured metadata
+    to detect drift early.
+
 ## Architecture Decisions & Acceptance Criteria
 - MCP tool invocation must reuse the ADK tool abstraction rather than a custom
   executor path to preserve planner compatibility.
