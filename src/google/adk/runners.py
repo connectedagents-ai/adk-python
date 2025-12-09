@@ -357,7 +357,24 @@ class Runner:
     # request as a special long running function tool call.
     event = find_matching_function_call(session.events)
     if event and event.author:
-      return root_agent.find_agent(event.author)
+      if agent := root_agent.find_agent(event.author):
+        return agent
+
+      function_call_ids = [
+          function_call.id for function_call in event.get_function_calls()
+      ]
+      agent_names = self._get_agent_names(root_agent)
+      logger.warning(
+          'Matched function call authored by unknown agent %s; '
+          'falling back to root agent. Event id: %s, function calls: %s, '
+          'known agents: %s. This often means the session references an agent '
+          'that was renamed or removed.',
+          event.author,
+          event.id,
+          function_call_ids,
+          agent_names,
+      )
+      return root_agent
     for event in filter(lambda e: e.author != 'user', reversed(session.events)):
       if event.author == root_agent.name:
         # Found root agent.
@@ -374,6 +391,17 @@ class Runner:
         return agent
     # Falls back to root agent if no suitable agents are found in the session.
     return root_agent
+
+  def _get_agent_names(self, agent: BaseAgent) -> list[str]:
+    """Returns the names of the provided agent and all of its descendants."""
+
+    def _collect_names(current_agent: BaseAgent) -> list[str]:
+      names = [current_agent.name]
+      for sub_agent in current_agent.sub_agents:
+        names.extend(_collect_names(sub_agent))
+      return names
+
+    return _collect_names(agent)
 
   def _is_transferable_across_agent_tree(self, agent_to_run: BaseAgent) -> bool:
     """Whether the agent to run can transfer to any other agent in the agent tree.
