@@ -77,6 +77,7 @@ Explore the full documentation for detailed guides on building, evaluating, and
 deploying agents:
 
 * **[Documentation](https://google.github.io/adk-docs)**
+* **[Agent Reference](./AGENT_REFERENCE.md)**
 
 ## 🏁 Feature Highlight
 
