@@ -77,6 +77,8 @@ Explore the full documentation for detailed guides on building, evaluating, and
 deploying agents:
 
 * **[Documentation](https://google.github.io/adk-docs)**
+* **[Agent operations playbook](docs/agent-ops-playbook.md)** for a
+  beginner-friendly checklist to plan and run multi-role assistants.
 
 ## 🏁 Feature Highlight
 
