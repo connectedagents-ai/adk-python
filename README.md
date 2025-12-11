@@ -76,8 +76,8 @@ Note: The development version is built directly from the latest code commits. Wh
 Explore the full documentation for detailed guides on building, evaluating, and
 deploying agents:
 
-* **[Documentation](https://google.github.io/adk-docs)**
-* **[Agent Reference](./AGENT_REFERENCE.md)**
+* **[Documentation](https://google.github.io/adk-docs)** - Complete ADK framework documentation
+* **[Agent Reference](./AGENT_REFERENCE.md)** - Catalog of specialized external AI agents for development workflows
 
 ## 🏁 Feature Highlight
 
