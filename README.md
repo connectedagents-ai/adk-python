@@ -79,6 +79,20 @@ deploying agents:
 * **[Documentation](https://google.github.io/adk-docs)**
 * **[Agent Reference](./AGENT_REFERENCE.md)**
 
+## 🌐 Community references
+
+- **[kagent-dev/kagent](https://github.com/kagent-dev/kagent)** – a
+  cloud-native agent platform that embeds ADK adapters for A2A and Kubernetes
+  workflows (for example,
+  [python/packages/kagent-adk](https://github.com/kagent-dev/kagent/tree/main/python/packages/kagent-adk)),
+  validating our architecture in production-style cloud deployments.
+- **[AIDC-AI/Agentic-ADK](https://github.com/AIDC-AI/Agentic-ADK)** – Alibaba’s
+  agent framework built on top of Google ADK, reusing our design patterns to
+  blend Google ADK with Ali LangEngine for multi-cloud agent orchestration.
+- **[google/adk-docs #63](https://github.com/google/adk-docs/issues/63)** – a
+  high-engagement community request for a TypeScript ADK, signaling demand for
+  extending our methods and architecture across languages and platforms.
+
 ## 🏁 Feature Highlight
 
 ### Define a single agent:
