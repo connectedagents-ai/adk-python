@@ -88,7 +88,7 @@ deploying agents:
   validating our architecture in production-style cloud deployments.
 - **[AIDC-AI/Agentic-ADK](https://github.com/AIDC-AI/Agentic-ADK)** – Alibaba’s
   agent framework built on top of Google ADK, reusing our design patterns to
-  blend Google ADK with Ali LangEngine for multi-cloud agent orchestration.
+  blend Google ADK with Alibaba LangEngine for multi-cloud agent orchestration.
 - **[google/adk-docs #63](https://github.com/google/adk-docs/issues/63)** – a
   high-engagement community request for a TypeScript ADK, signaling demand for
   extending our methods and architecture across languages and platforms.
