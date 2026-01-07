@@ -38,6 +38,10 @@ Agent Development Kit (ADK) is a flexible and modular framework for developing a
 - **Modular Multi-Agent Systems**: Design scalable applications by composing
   multiple specialized agents into flexible hierarchies.
 
+- **Voice Interfaces**: Enable low-latency voice agents that can delegate to
+  fully tooled primary agents for complex tasks. See
+  [Voice Agents](./voice_agents.md) for a complete guide.
+
 - **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or
   scale seamlessly with Vertex AI Agent Engine.
 
