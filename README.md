@@ -78,6 +78,7 @@ deploying agents:
 
 * **[Documentation](https://google.github.io/adk-docs)**
 * **[Agent Reference](./AGENT_REFERENCE.md)**
+* **[Tools Guide](./TOOLS.md)**
 
 ## 🏁 Feature Highlight
 
