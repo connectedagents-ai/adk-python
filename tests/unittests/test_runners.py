@@ -290,6 +290,82 @@ class TestRunnerFindAgentToRun:
     result = self.runner._find_agent_to_run(session, self.root_agent)
     assert result == self.sub_agent2
 
+  def test_find_agent_to_run_handles_unknown_function_call_agent(self):
+    """Function response for unknown agent falls back to root agent."""
+    function_call = types.FunctionCall(id="func_999", name="test_func", args={})
+    function_response = types.FunctionResponse(
+        id="func_999", name="test_func", response={}
+    )
+
+    unknown_call_event = Event(
+        invocation_id="inv1",
+        author="mystery_agent",
+        content=types.Content(
+            role="model", parts=[types.Part(function_call=function_call)]
+        ),
+    )
+
+    response_event = Event(
+        invocation_id="inv2",
+        author="user",
+        content=types.Content(
+            role="user", parts=[types.Part(function_response=function_response)]
+        ),
+    )
+
+    session = Session(
+        id="test_session",
+        user_id="test_user",
+        app_name="test_app",
+        events=[unknown_call_event, response_event],
+    )
+
+    result = self.runner._find_agent_to_run(session, self.root_agent)
+    assert result == self.root_agent
+
+  def test_find_agent_to_run_logs_unknown_function_call_agent_details(self, caplog):
+    """Unknown function call agent logs additional context."""
+    function_call = types.FunctionCall(id="func_321", name="test_func", args={})
+    function_response = types.FunctionResponse(
+        id="func_321", name="test_func", response={}
+    )
+
+    unknown_call_event = Event(
+        invocation_id="inv1",
+        author="ghost_agent",
+        content=types.Content(
+            role="model", parts=[types.Part(function_call=function_call)]
+        ),
+    )
+
+    response_event = Event(
+        invocation_id="inv2",
+        author="user",
+        content=types.Content(
+            role="user", parts=[types.Part(function_response=function_response)]
+        ),
+    )
+
+    session = Session(
+        id="test_session",
+        user_id="test_user",
+        app_name="test_app",
+        events=[unknown_call_event, response_event],
+    )
+
+    with caplog.at_level("WARNING"):
+        result = self.runner._find_agent_to_run(session, self.root_agent)
+
+    assert result == self.root_agent
+    assert any(
+        "ghost_agent" in record.message
+        and "func_321" in record.message
+        and "root_agent" in record.message
+        and "falling back to root agent" in record.message
+        and "renamed or removed" in record.message
+        for record in caplog.records
+    )
+
   def test_is_transferable_across_agent_tree_with_llm_agent(self):
     """Test _is_transferable_across_agent_tree with LLM agent."""
     result = self.runner._is_transferable_across_agent_tree(self.sub_agent1)
