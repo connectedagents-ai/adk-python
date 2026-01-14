@@ -1,5 +1,9 @@
 # Agent Reference
 
+> **Note**: This document references external AI agent plugins that are designed to work with development workflows. These are NOT part of the ADK Python framework itself. The ADK provides the infrastructure to build, deploy, and manage agents - this document catalogs specialized agents that can be integrated into your development environment.
+>
+> **Agent links below reference external plugin documentation.** For ADK framework agents (LlmAgent, SequentialAgent, etc.), see the [ADK Documentation](https://google.github.io/adk-docs).
+
 Complete reference for all **86 specialized AI agents** organized by category with model assignments.
 
 ## Agent Categories
